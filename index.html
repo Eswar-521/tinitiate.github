@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Interview Process</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      background-color:white;
+      color: rgb(31, 199, 54);
+      padding: 25px 20px;
+      font-size: 30px;
+      text-align: center;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-logo {
+      position: absolute;
+      left: 20px;
+      height: 30px;
+      width: auto;
+      border-radius: 50%;
+    }
+
+    footer {
+      background-color: #0f172a;
+      color: rgb(13, 192, 177);
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #1e293b;
+      color: rgb(212, 52, 52);
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .sidebar a {
+      display: block;
+      color: rgb(79, 170, 166);
+      text-decoration: none;
+      margin: 8px 0;
+      padding: 8px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    .sidebar a:hover {
+      background-color: #17b2bd;
+    }
+
+    .main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: row;
+      overflow: hidden;
+    }
+
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .content-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 20px;
+    }
+
+    .content-scroll h1, .content-scroll h2, .content-scroll h3 {
+      scroll-margin-top: 100px;
+    }
+
+    .toc-inline {
+      width: 200px;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .toc-inline.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .toc-inline h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #1e293b;
+    }
+
+    .toc-inline a {
+      display: block;
+      color: #0f172a;
+      text-decoration: none;
+      margin-bottom: 8px;
+      padding: 6px 6px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    .toc-inline a:hover {
+      background-color: #cfe2ff;
+      color: #0a58ca;
+    }
+
+    .toc-inline a.active {
+      background-color: #0f172a;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <img src="logo_no_bg_black.png" alt="Logo" class="header-logo">
+    Interview Process Portal
+  </header>
+
+  <div class="container">
+    
+    <div class="sidebar">
+      <a href="#" onclick="loadContent('introduction')">📘 Introduction</a>
+      <a href="#" onclick="loadContent('technical-disscussion')">💻 Technical Discussion</a>
+      <a href="#" onclick="loadContent('testing')">🧪 Testing</a>
+      <a href="#" onclick="loadContent('Deployment')">🚀 Deployment</a>
+      <a href="#" onclick="loadContent('non-technical-discussion')">📋 Non-Technical Discussion</a>
+      <a href="#" onclick="loadContent('interview-question')">❓ Interview Questions</a>
+      <a href="#" onclick="loadContent('diffcult-scenarios')">🧩 Difficult Scenarios</a>
+      <a href="#" onclick="loadContent('storyboard')">📈 Storyboard</a>
+      <a href="#" onclick="loadContent('application-code')">📦 Application Code</a>
+      <a href="#" onclick="loadContent('technology-stack')">🛠️ Technology Stack</a>
+    </div>
+
+    
+    <div class="main">
+      <div class="content-area">
+        <div class="content-scroll" id="mainContent">
+          <h1>Welcome to the Project Report</h1>
+          <p>Select a topic from the sidebar to begin.</p>
+        </div>
+        <div class="toc-inline" id="toc">
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Interview Process. All rights reserved.
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <script>
+    function loadContent(section) {
+      fetch(`readmes/${section}.md`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('File not found');
+          }
+          return response.text();
+        })
+        .then(markdown => {
+          const html = marked.parse(markdown);
+          const contentEl = document.getElementById('mainContent');
+          contentEl.innerHTML = html;
+          generateTOC();
+        })
+        .catch(error => {
+          document.getElementById('mainContent').innerHTML =
+            `<h2>Error loading content</h2><p>${error.message}</p>`;
+        });
+    }
+
+    function generateTOC() {
+      const content = document.getElementById('mainContent');
+      const toc = document.getElementById('toc');
+      toc.innerHTML = `<h3>Contents</h3>`;
+
+      const headers = content.querySelectorAll('h2, h3');
+      if (headers.length === 0) {
+        toc.classList.remove('show');
+        return;
+      }
+
+      headers.forEach((header, index) => {
+        const id = `toc-heading-${index}`;
+        header.id = id;
+
+        const link = document.createElement('a');
+        link.href = `#${id}`;
+
+        
+        const cleanText = header.textContent.replace(
+          /[\u{1F300}-\u{1F6FF}|\u{1F900}-\u{1F9FF}|\u{2600}-\u{26FF}|\u{2700}-\u{27BF}]/gu,
+          ''
+        ).trim();
+
+        link.textContent = cleanText;
+
+        
+        link.addEventListener('click', function () {
+          document.querySelectorAll('.toc-inline a').forEach(a => a.classList.remove('active'));
+          this.classList.add('active');
+        });
+
+        toc.appendChild(link);
+      });
+
+      toc.classList.add('show');
+    }
+  </script>
+</body>
+
+</html>
